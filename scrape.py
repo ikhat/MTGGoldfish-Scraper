@@ -442,3 +442,5 @@ def get_all_legacy_decks(stop = None):
 if __name__ == '__main__':
 	# Testing that everything works by looking at the first 10 tournaments.
 	get_all_legacy_decks(10)
+
+	# Adding some comments so this file shows up in a pull request.
