@@ -173,6 +173,10 @@ class mtgGoldfishSearch:
 def get_deck_from_id(deckid: str) -> dict:
 	'''Gets information about a deck from its MTGGoldfish deck ID.
 
+	Looks at the HTML of a deck's page and extracts various pieces of
+	deck information from four distinct parts of it. The four nested
+	funtions here correspond to each of those four tasks.
+
 	Args:
 		deckid (str): Deck ID as a string, e.g., '435910'
 
