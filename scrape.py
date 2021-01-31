@@ -137,18 +137,11 @@ class mtgGoldfishSearch:
 		'''
 		if page_number == None:
 			page_number = 1
-
-
-		if not isinstance(page_number, int):
+		elif not isinstance(page_number, int):
 			raise TypeError('The page number must be an integer! You entered a {1}.'.format(self.number_of_pages, type(page_number)))
 		elif page_number < 1 or page_number > self.number_of_pages:
-			raise ValueError('The page number must be an integer between 1 and {0}! You entered {1}.'.format(self.number_of_pages, page_number))
+			raise ValueError('This search only has {0} pages! You asked for page number {1}.'.format(self.number_of_pages, page_number))
 
-		return self.page1_url[:-1] + str(page_number)
-
-	@property
-	def page1_url(self):
-		'''Gets the URL for the first page of the search.'''
 		if self.keywords:
 			url_keywords = '+'.join([word for word in self.keywords])
 		else:
@@ -159,15 +152,10 @@ class mtgGoldfishSearch:
 			self.begin_date.strftime('%m%%2F%d%%2F%Y'),
 			self.end_date.strftime('%m%%2F%d%%2F%Y'),
 			url_keywords,
-			'1'
+			page_number
 			)
 
 		return self.BASE_URL + search_string
-
-	@property
-	def page1_soup(self):
-		'''Gets the BeautifulSoup object for the first page of search results'''
-		return soup_from_url(self.page1_url)
 
 	@property
 	def number_of_pages(self):
@@ -175,7 +163,7 @@ class mtgGoldfishSearch:
 
 		Finds the text content of the last page number button.
 		'''
-		pagination = self.page1_soup.find('ul', {'class':'pagination'})
+		pagination = soup_from_url(self.url()).find('ul', {'class':'pagination'})
 		if pagination is None:
 			return 1
 		else:
@@ -184,6 +172,10 @@ class mtgGoldfishSearch:
 
 def get_deck_from_id(deckid: str) -> dict:
 	'''Gets information about a deck from its MTGGoldfish deck ID.
+
+	Looks at the HTML of a deck's page and extracts various pieces of
+	deck information from four distinct parts of it. The four nested
+	funtions here correspond to each of those four tasks.
 
 	Args:
 		deckid (str): Deck ID as a string, e.g., '435910'
@@ -441,4 +433,11 @@ def get_all_legacy_decks(stop = None):
 
 if __name__ == '__main__':
 	# Testing that everything works by looking at the first 10 tournaments.
-	get_all_legacy_decks(10)
+	# get_all_legacy_decks(10)
+
+	testSearch = mtgGoldfishSearch('legacy', '2020-01-01', '2021-01-31')
+
+	print(testSearch.url(13))
+	print(testSearch.number_of_pages)
+
+	# Adding some comments so this file shows up in a pull request.
